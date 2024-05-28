@@ -1,12 +1,21 @@
 # Camera-Stream-RabbitMQ-Publisher-Subscriber
 
 # VideoPublishProc.cpp
-
+This C++ code is designed to capture frames from a camera and publish them to a RabbitMQ message queue as JPEG images. Here's a breakdown of what the code does: 
+1. The necessary headers are included: `iostream` for standard input/output, `opencv2/opencv.hpp` for OpenCV functionality, and `rabbitmq-c/amqp.h` and `rabbitmq-c/tcp_socket.h` for RabbitMQ client library.
+2. In the `main` function, a connection to RabbitMQ is established by creating a new connection state (`amqp_new_connection()`), opening a socket to the RabbitMQ server running on `localhost` at port `5672`, and authenticating with the default guest user credentials.
+3. A new channel is opened on the RabbitMQ connection, and a queue named `"opencv_frames"` is declared using `amqp_queue_declare`.
+4. An OpenCV `VideoCapture` object is created to access the default camera (device index 0).
+5. The main loop begins, where frames are continuously captured from the camera using `cap >> frame`.
+6. If a frame is successfully captured, it is encoded as a JPEG image using `cv::imencode`.
+7. The encoded JPEG data is published to the `"opencv_frames"` queue on RabbitMQ using `amqp_basic_publish`. The message properties are set to indicate that the content type is `"image/jpeg"`.
+8. After the loop exits (e.g., if the camera fails to capture a frame), the RabbitMQ channel and connection are closed, and resources are cleaned up. In summary, this code sets up a pipeline to continuously capture frames from a camera, encode them as JPEG images, and publish them to a RabbitMQ message queue named `"opencv_frames"`.
+9. This could be useful in scenarios where you need to stream video data from a camera to other applications or services in a distributed system.
+    
 - Compilation command
 - g++ -std=c++11 -o VideoPublisProc pkg-config --cflags --libs opencv4 -lrabbitmq VideoPublishProc.cpp
 
-
-
+# VideoSubscribeProc.cpp
   
 - Compilation command
 - g++ -std=c++11 -o VideoSubscribeProc pkg-config --cflags --libs opencv4 -lrabbitmq VideoSubscribeProc.cpp
