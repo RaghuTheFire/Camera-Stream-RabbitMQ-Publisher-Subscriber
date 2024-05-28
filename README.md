@@ -1,5 +1,17 @@
 # Camera-Stream-RabbitMQ-Publisher-Subscriber
 
+# VideoPublishProc.cpp
+
+- Compilation command
+- g++ -std=c++11 -o VideoPublisProc pkg-config --cflags --libs opencv4 -lrabbitmq VideoPublishProc.cpp
+
+
+
+  
+- Compilation command
+- g++ -std=c++11 -o VideoSubscribeProc pkg-config --cflags --libs opencv4 -lrabbitmq VideoSubscribeProc.cpp
+
+
 # Publisher&Subscriber.cpp
 
 This C++ code demonstrates a simple publisher-subscriber system using RabbitMQ for transmitting video frames captured from a webcam. Here's a breakdown of the code: 
