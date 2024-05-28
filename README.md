@@ -1,6 +1,7 @@
 # Camera-Stream-RabbitMQ-Publisher-Subscriber
 
 # VideoPublishProc.cpp
+
 This C++ code is designed to capture frames from a camera and publish them to a RabbitMQ message queue as JPEG images. Here's a breakdown of what the code does: 
 1. The necessary headers are included: `iostream` for standard input/output, `opencv2/opencv.hpp` for OpenCV functionality, and `rabbitmq-c/amqp.h` and `rabbitmq-c/tcp_socket.h` for RabbitMQ client library.
 2. In the `main` function, a connection to RabbitMQ is established by creating a new connection state (`amqp_new_connection()`), opening a socket to the RabbitMQ server running on `localhost` at port `5672`, and authenticating with the default guest user credentials.
@@ -16,6 +17,18 @@ This C++ code is designed to capture frames from a camera and publish them to a 
 - g++ -std=c++11 -o VideoPublisProc pkg-config --cflags --libs opencv4 -lrabbitmq VideoPublishProc.cpp
 
 # VideoSubscribeProc.cpp
+
+This C++ code is designed to receive and display video frames from a RabbitMQ message queue using the OpenCV library. Here's a breakdown of what the code does: 
+1. The necessary headers are included, including `iostream`, `opencv2/opencv.hpp`, and the RabbitMQ C library headers (`amqp_tcp_socket.h`, `amqp.h`, and `amqp_framing.h`).
+2. The `main` function starts by initializing a RabbitMQ connection. It creates a TCP socket and establishes a connection to the RabbitMQ server running on `localhost` at port `5672`.
+3. An AMQP channel is opened on the connection, and a queue named `opencv_frames` is declared.
+4. The code starts consuming messages from the `opencv_frames` queue by issuing an `amqp_basic_consume` command.
+5. The program enters an infinite loop, where it continuously waits for incoming messages from the queue using `amqp_consume_message`.
+6. When a message is received, the code checks if the message body contains data. If it does, the message body is converted to an OpenCV `Mat` object using `imdecode`.
+7. The resulting `Mat` object, which represents a video frame, is displayed using OpenCV's `imshow` function.
+8. The program waits for 1 millisecond using `waitKey(1)` to allow the window to refresh and process any user input (e.g., closing the window). 9. After processing the message, the envelope is destroyed using `amqp_destroy_envelope`.
+10. The loop continues, waiting for the next message to arrive.
+11. When the program is terminated (e.g., by closing the window), the channel and connection are closed, and resources are cleaned up using `amqp_channel_close`, `amqp_connection_close`, and `amqp_destroy_connection`. In summary, this code sets up a RabbitMQ consumer that listens for messages on a specific queue (`opencv_frames`). When a message arrives, it is assumed to contain image data, which is decoded and displayed using OpenCV. The program continues to receive and display frames until it is terminated.
   
 - Compilation command
 - g++ -std=c++11 -o VideoSubscribeProc pkg-config --cflags --libs opencv4 -lrabbitmq VideoSubscribeProc.cpp
